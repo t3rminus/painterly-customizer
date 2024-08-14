@@ -1,3 +1,22 @@
 {
-  "extends": "next/core-web-vitals"
+  "root": true,
+  "extends": [
+    "semistandard",
+    "plugin:react/recommended",
+    "next/core-web-vitals",
+    "prettier"
+  ],
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": ["error", { "skipUndeclared": true }],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "quote-props": ["error", "consistent-as-needed", { "keywords": true }],
+    "jsx-quotes": ["error", "prefer-double"]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }
