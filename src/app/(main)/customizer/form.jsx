@@ -14,7 +14,7 @@ const RenderLevel = ({ ...props }) => {
             <li key={g.id}>
               <h4>{g.name}</h4>
               <div className="flex gap-4 p-2">
-                {options.map((o) => (
+                {options.filter(o => o['option-group'] === g.id).map((o) => (
                   <label key={o.id} className="relative">
                     <input
                       type="radio"

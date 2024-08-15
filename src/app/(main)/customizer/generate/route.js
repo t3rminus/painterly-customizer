@@ -29,22 +29,30 @@ export async function POST(req) {
       archive.append(texture.source, { name: texture.path });
     }
   });
-  textures.filter(t => t.compose).forEach(texture => {
+
+  const composeTextures = textures
+    .filter((t) => t.compose);
+  for (const texture of composeTextures) {
     if (texture.path.indexOf('_') !== 0) {
       if (Array.isArray(texture.compose)) {
-        let result = texture.source ? sharp(texture.source) : blankImage();
-        result = result.composite(texture.compose.map(step => {
-          if (typeof (step) === 'string' && reference[step]) {
-            return reference[step];
-          } else if (typeof (step) === 'string') {
-            return atob(step);
-          }
-          return null;
-        }).filter(s => s));
-        archive.append(result.toBuffer(), { name: texture.path });
+        let result = texture.source ? sharp(texture.source) : blankImage(16);
+        const steps = texture.compose
+          .map((step) => {
+            if (typeof step === 'string' && reference[step]) {
+              return { input: reference[step].source };
+            } else if (typeof step === 'string') {
+              return { input: atob(step) };
+            }
+            return null;
+          })
+          .filter((s) => s);
+        result = result.composite(steps);
+        archive.append(await result.toFormat('png').toBuffer(), {
+          name: texture.path
+        });
       }
     }
-  });
+  }
 
   const mcmeta = {
     pack: {
