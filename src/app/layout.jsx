@@ -1,8 +1,8 @@
-import "./globals.css";
+import './globals.css';
 
 export const metadata = {
-  title: "Painterly Customizer",
-  description: "",
+  title: 'Painterly Customizer',
+  description: '',
 };
 
 export default function RootLayout({ children }) {

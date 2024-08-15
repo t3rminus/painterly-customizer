@@ -7,6 +7,7 @@ export async function getCategoryTree() {
     .execute();
 
   // Index by ID
+  // eslint-disable-next-line no-return-assign, no-sequences
   const nodeIndex = nodes.reduce((o, n) => (o[n.id] = { ...n, children: [] }, o), {});
 
   // Generate as a tree
