@@ -2,6 +2,18 @@ import { NextResponse } from 'next/server';
 import { parseFormData } from 'parse-nested-form-data';
 import archiver from 'archiver';
 import { getTexturesForOptions } from '@/lib/db/texture';
+import sharp from 'sharp';
+
+const blankImage = (size) => {
+  return sharp({
+    create: {
+      width: size,
+      height: size,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0.0 }
+    }
+  });
+};
 
 export async function POST(req) {
   const formData = parseFormData(await req.formData());
@@ -10,9 +22,27 @@ export async function POST(req) {
 
   const options = Object.values(formData.options);
   const textures = await getTexturesForOptions(options);
-  textures.forEach(texture => {
-    if (!texture.compose) {
-      archive.append(texture.source, { name: texture.path })
+  const reference = {};
+  textures.filter(t => !t.compose).forEach(texture => {
+    reference[texture.path] = texture;
+    if (texture.path.indexOf('_') !== 0) {
+      archive.append(texture.source, { name: texture.path });
+    }
+  });
+  textures.filter(t => t.compose).forEach(texture => {
+    if (texture.path.indexOf('_') !== 0) {
+      if (Array.isArray(texture.compose)) {
+        let result = texture.source ? sharp(texture.source) : blankImage();
+        result = result.composite(texture.compose.map(step => {
+          if (typeof (step) === 'string' && reference[step]) {
+            return reference[step];
+          } else if (typeof (step) === 'string') {
+            return atob(step);
+          }
+          return null;
+        }).filter(s => s));
+        archive.append(result.toBuffer(), { name: texture.path });
+      }
     }
   });
 
