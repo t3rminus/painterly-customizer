@@ -12,7 +12,7 @@ export function Button({ className = '', asChild, ...props }) {
   return (
     <RenderedComponent
       className={twMerge(
-        'btn rounded-full',
+        'btn',
         !className.includes('btn-outline') && 'border-0',
         className
       )}

@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { AuthAdminConfig } from './auth.config';
 import { getUserByEmail, getUserById, updateLastLogin } from './db/user';
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 const nextAuth = NextAuth({
   ...AuthAdminConfig,
@@ -12,19 +12,21 @@ const nextAuth = NextAuth({
       name: 'Email',
       async authorize(credentials) {
         try {
-          const admin = await getUserByEmail(credentials.email);
+          const user = await getUserByEmail(
+            `${credentials.email}`.toLowerCase()
+          );
 
-          if (admin) {
+          if (user) {
             const passwordsMatch = await bcrypt.compare(
               credentials.password,
-              admin.password
+              user.password
             );
             if (passwordsMatch) {
-              await updateLastLogin(admin.id);
+              await updateLastLogin(user.id);
               return {
-                id: admin.id,
-                name: admin.name,
-                email: admin.email
+                id: user.id,
+                name: user.name,
+                email: user.email
               };
             }
           }
@@ -51,11 +53,11 @@ export default nextAuth;
 export const { auth, signIn, signOut } = nextAuth;
 export const { GET, POST } = nextAuth.handlers;
 export const getUser = async () => {
-  const { user = null } = (await auth()) || {};
+  let { user = null } = (await auth()) || {};
   if (user && user.id) {
-    return getUserById(user.id);
+    user = await getUserById(user.id);
   }
-  return user;
+  return user ? { id: user.id, email: user.email } : null;
 };
 export const isFullAdmin = async () => {
   const user = await getUser();

@@ -1,14 +1,22 @@
+import { PageLayout } from '@/components/layout/page-layout';
 import './globals.css';
+import { getUser } from '@/lib/auth';
 
 export const metadata = {
   title: 'Painterly Customizer',
   description: '',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const user = await getUser();
+  console.log(user);
   return (
     <html lang="en">
-      <body className="p-4">{children}</body>
+      <body>
+        <PageLayout user={user}>
+          {children}
+        </PageLayout>
+      </body>
     </html>
   );
 }

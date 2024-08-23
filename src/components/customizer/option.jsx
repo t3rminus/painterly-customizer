@@ -13,17 +13,19 @@ export function CustomizerOption({ option, group }) {
         {...register(`+options.${group.id}`)}
       />
       <div className="flex gap-2 p-2 rounded items-center text-sm leading-tight group peer-checked:bg-base-200">
-        <CaretForwardOutline className="w-5 h-5 invisible peer-checked:group-[]:visible" />
+        <span className="w-3 h-3 flex-shrink-0 border border-current rounded-full peer-checked:group-[]:bg-current" />
         <img
           src={option.preview}
           alt={option.description}
           className="w-6 h-6 [image-rendering:pixelated]"
         />
-        <h5>{option.description}</h5>
-        <div className="italic ml-auto mr-0">
-          {!!Array.isArray(option.authors) && (
-            <>by {option.authors.join(',')}</>
-          )}
+        <div className="flex-1 flex gap-2 flex-wrap md:flex-nowrap">
+          <h5>{option.description}</h5>
+          <div className="italic ml-auto mr-0">
+            {!!Array.isArray(option.authors) && (
+              <>by {option.authors.join(',')}</>
+            )}
+          </div>
         </div>
       </div>
     </label>

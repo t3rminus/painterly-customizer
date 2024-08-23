@@ -13,5 +13,13 @@ export default async function Customizer() {
     preview: `data:image/png;base64,${o.preview.toString('base64')}`
   }));
 
-  return <CustomizerForm categories={categories} groups={groups} options={options} />
+  return (
+    <div className="max-w-[60ch] w-full mx-auto">
+      <CustomizerForm
+        categories={categories}
+        groups={groups}
+        options={options}
+      />
+    </div>
+  );
 }

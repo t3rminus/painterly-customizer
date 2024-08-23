@@ -12,7 +12,7 @@ export const getUserByEmail = async (email) => {
   return db
     .selectFrom('user')
     .selectAll()
-    .where('user', '=', email)
+    .where('email', '=', email)
     .executeTakeFirstOrThrow();
 };
 
@@ -30,11 +30,11 @@ export const listUsers = async ({ limit = 10, offset = 0, sort }) => {
   // TODO: Querying / Projection
   let dataQuery = db
     .selectFrom('user')
-    .select(['id', 'user', 'name', 'role', 'lastLogin'])
+    .select(['id', 'email', 'isAdmin', 'lastLogin'])
     .offset(offset)
     .limit(limit);
 
-  const totalQuery = db.selectFrom('admin').select(({ fn }) => fn.countAll());
+  const totalQuery = db.selectFrom('user').select(({ fn }) => fn.countAll());
 
   if (offset) {
     dataQuery = dataQuery.offset(offset);
