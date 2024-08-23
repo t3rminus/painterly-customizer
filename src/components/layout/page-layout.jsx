@@ -1,4 +1,3 @@
-import { Header } from '@/components/layout/header';
 import { Nav } from '@/components/layout/nav';
 import { Logo } from './logo';
 import { Hamburger } from '../shared/icons';

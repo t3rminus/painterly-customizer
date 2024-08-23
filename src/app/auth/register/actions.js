@@ -12,8 +12,8 @@ export async function register(callbackUrl, _prevState, formData) {
 
   try {
     await signIn('credentials', {
+      email,
       redirectTo: callbackUrl,
-      email: email,
       password: formData.password
     });
   } catch (err) {

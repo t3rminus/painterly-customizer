@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { signOut } from './actions';
 import { twMerge } from 'tailwind-merge';
 import { ProfileMenu } from './profile-menu';
 

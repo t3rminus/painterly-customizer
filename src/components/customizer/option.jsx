@@ -1,5 +1,4 @@
 'use client'
-import { CaretForwardOutline } from '@raresail/react-ionicons';
 import { useFormContext } from 'react-hook-form';
 
 export function CustomizerOption({ option, group }) {

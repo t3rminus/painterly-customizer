@@ -20,7 +20,7 @@ export async function ProfileMenu({ top, ...props}) {
           className="dropdown-content z-[1] menu p-2 bg-base-100 text-base-content shadow-lg rounded-box w-full"
         >
           <li>
-            <a href={`/profile`}>My Profile</a>
+            <a href={'/profile'}>My Profile</a>
           </li>
           <li>
             <form action={signOut} className="relative block h-8">
