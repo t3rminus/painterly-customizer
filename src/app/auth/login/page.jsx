@@ -9,7 +9,8 @@ export const metadata = {
   description: ''
 };
 
-export default async function SignInPage({ searchParams: { callbackUrl } = {} }) {
+export default async function SignInPage({ searchParams }) {
+  const { callbackUrl } = await searchParams;
   const user = await getUser();
   if (user) {
     return redirect('/');

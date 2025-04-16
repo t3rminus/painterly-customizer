@@ -7,14 +7,16 @@ export const Input = forwardRef(
       render,
       label,
       icon: initialIcon,
-      containerClassName = '',
-      inputClassName = '',
-      labelClassName = '',
-      className = '',
+      iconAfter,
+      containerClassName,
+      inputClassName,
+      labelClassName,
+      className,
       disabled,
-      shadow = true,
       error,
-      errorClassName = '',
+      errorClassName,
+      instruction,
+      instructionClassName,
       ...props
     },
     ref
@@ -33,32 +35,49 @@ export const Input = forwardRef(
         )}
         <div
           className={twMerge(
-            'input relative flex items-center pr-0',
-            !icon && 'pl-0',
+            'input input-bordered relative flex items-center px-0 overflow-hidden',
             disabled && 'input-disabled opacity-40',
             error ? 'input-error text-error' : '',
             inputClassName
           )}
         >
-          {!!icon && icon}
+          {!!icon && <div className="absolute ps-4">{icon}</div>}
           {!render && (
             <input
               {...props}
               ref={ref}
-              className={twMerge('grow h-full px-3', className)}
+              className={twMerge(
+                'grow h-full px-4',
+                !!icon && 'ps-12',
+                className
+              )}
               disabled={disabled}
             />
           )}
           {!!render &&
             render({
-              className: twMerge('grow min-h-full px-3', className),
+              className: twMerge(
+                'grow min-h-full px-4',
+                !!icon && 'ps-12',
+                className
+              ),
               disabled,
               ...props
             })}
+          {!!iconAfter && (
+            <div className="absolute end-0 pe-4">{iconAfter}</div>
+          )}
         </div>
         {!!error?.message && (
           <div className={twMerge('label pb-0', errorClassName)}>
             <span className="label-text-alt text-error">{error?.message}</span>
+          </div>
+        )}
+        {!error?.message && !!instruction && (
+          <div className={twMerge('label pb-0', instructionClassName)}>
+            {typeof instruction === 'string'
+              ? (<span className="label-text-alt opacity-60">{instruction}</span>)
+              : (instruction)}
           </div>
         )}
       </label>

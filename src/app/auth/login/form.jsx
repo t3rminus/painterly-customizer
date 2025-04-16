@@ -1,13 +1,17 @@
 'use client';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { authenticate } from './actions';
 import { Input } from '@/components/shared/input';
 import { Button } from '@/components/shared/button';
 import Link from 'next/link';
-import { ArrowBackOutline, LockClosedOutline, MailOutline } from '@raresail/react-ionicons';
+import {
+  ArrowBackOutline,
+  LockClosedOutline,
+  MailOutline
+} from '@raresail/react-ionicons';
 
 export default function SignInForm({ callbackUrl }) {
-  const [errorMessage, dispatch] = useFormState(
+  const [errorMessage, dispatch] = useActionState(
     authenticate.bind(null, callbackUrl)
   );
   return (
