@@ -11,8 +11,8 @@ export function CustomizerOption({ option, group }) {
         className="absolute top-1 left-1 hidden peer"
         {...register(`+options.${group.id}`)}
       />
-      <div className="flex gap-2 p-2 rounded items-center text-sm leading-tight group peer-checked:bg-base-200">
-        <span className="w-3 h-3 flex-shrink-0 border border-current rounded-full peer-checked:group-[]:bg-current" />
+      <div className="flex gap-2 p-2 rounded-sm items-center text-sm leading-tight group peer-checked:bg-base-200">
+        <span className="w-3 h-3 shrink-0 border border-current rounded-full in-[.group]:peer-checked:bg-current" />
         <img
           src={option.preview}
           alt={option.description}

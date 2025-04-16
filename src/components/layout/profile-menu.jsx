@@ -17,7 +17,7 @@ export async function ProfileMenu({ top, ...props}) {
         />
         <ul
           tabIndex={0}
-          className="dropdown-content z-[1] menu p-2 bg-base-100 text-base-content shadow-lg rounded-box w-full"
+          className="dropdown-content z-1 menu p-2 bg-base-100 text-base-content shadow-lg rounded-box w-full"
         >
           <li>
             <a href={'/profile'}>My Profile</a>
