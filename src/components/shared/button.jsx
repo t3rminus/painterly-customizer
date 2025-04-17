@@ -12,8 +12,7 @@ export function Button({ className = '', asChild, ...props }) {
   return (
     <RenderedComponent
       className={twMerge(
-        'btn',
-        !className.includes('btn-outline') && 'border-0',
+        'btn btn-primary',
         className
       )}
       {...props}

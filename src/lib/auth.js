@@ -3,9 +3,11 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { AuthAdminConfig } from './auth.config';
 import { getUserByEmail, getUserById, updateLastLogin } from './db/user';
 import bcrypt from 'bcryptjs';
+import { logger } from './auth.logger';
 
 const nextAuth = NextAuth({
   ...AuthAdminConfig,
+  logger,
   providers: [
     CredentialsProvider({
       id: 'credentials',

@@ -35,7 +35,7 @@ export const Input = forwardRef(
         )}
         <div
           className={twMerge(
-            'input input-bordered relative flex items-center px-0 overflow-hidden',
+            'input relative flex items-center px-0 overflow-hidden',
             disabled && 'input-disabled opacity-40',
             error ? 'input-error text-error' : '',
             inputClassName

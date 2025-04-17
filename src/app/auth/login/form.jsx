@@ -23,7 +23,7 @@ export default function SignInForm({ callbackUrl }) {
         placeholder="email@example.com"
         autoComplete="email"
         icon={<MailOutline className="w-5 h-5" />}
-        inputClassName="input-bordered"
+        inputClassName="w-full"
       />
       <Input
         label="Password"
@@ -32,7 +32,7 @@ export default function SignInForm({ callbackUrl }) {
         placeholder="••••••••"
         autoComplete="current-password"
         icon={<LockClosedOutline className="w-5 h-5" />}
-        inputClassName="input-bordered"
+        inputClassName="w-full"
       />
       {!!errorMessage && (
         <div className="alert alert-error text-white rounded-btn">
