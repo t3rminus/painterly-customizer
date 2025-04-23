@@ -10,15 +10,17 @@ const generatePlaceholder = (loadingProps) =>
   // Not a component, eslint. Not a component.
   // eslint-disable-next-line react/display-name
   () => {
-    const { className, placeholder, isMulti } = loadingProps();
+    const { className, inputClassName, placeholder, isMulti, disabled } = loadingProps();
     return (
       <select
         className={twMerge(
-          'select px-4 py-2 !text-current/50',
-          isMulti && '!min-h-[2.8125rem]',
+          'select block px-4 py-2 !text-current/50',
+          isMulti && '!min-h-12',
+          inputClassName,
           className
         )}
         defaultValue=""
+        disabled={disabled}
       >
         <option value="" disabled>
           {placeholder}
@@ -116,6 +118,7 @@ function SelectBase({
   label,
   containerClassName,
   labelClassName,
+  inputClassName,
   className,
   onChange,
   isMulti,
@@ -130,6 +133,7 @@ function SelectBase({
   placeholder,
   instruction,
   instructionClassName,
+  disabled,
   ...props
 }) {
   const [selectedValue, setSelectedValue] = useState(defaultValue);
@@ -162,6 +166,7 @@ function SelectBase({
         {...props}
         unstyled
         instanceId={id}
+        isDisabled={disabled}
         value={value}
         onChange={doOnChange}
         isMulti={isMulti}
@@ -183,9 +188,10 @@ function SelectBase({
           control: ({ isFocused, isMulti }) =>
             twMerge(
               menuIsOpen === false ? 'input' : 'select',
-              '!h-auto px-4 py-2 box-border !outline-2 outline-offset-2 !outline-transparent',
+              'px-4 py-2 box-border !outline-2 outline-offset-2 !outline-transparent',
+              inputClassName,
               isFocused && '!outline-current',
-              isMulti && '!min-h-[2.8125rem]',
+              isMulti && '!min-h-12',
               !!error && 'select-error text-error'
             ),
           menuList: () => 'text-sm bg-base-100 mt-2 p-2 shadow-sm rounded-md',
