@@ -1,61 +1,11 @@
 'use client';
-import dynamic from 'next/dynamic';
-import withLoadingProps from 'next-dynamic-loading-props';
-import { useId, useState, cloneElement, useRef } from 'react';
-import { components } from 'react-select';
+import { useId, useState, cloneElement, useRef, forwardRef } from 'react';
+import ReactSelect, { components } from 'react-select';
+import ReactSelectAsync from 'react-select/async';
+import ReactSelectCreatable from 'react-select/creatable';
+import ReactSelectAsyncCreatable from 'react-select/async-creatable';
 import { CheckmarkOutline, CloseOutline } from '@raresail/react-ionicons';
 import { twMerge } from 'tailwind-merge';
-
-const generatePlaceholder = (loadingProps) =>
-  // Not a component, eslint. Not a component.
-  // eslint-disable-next-line react/display-name
-  () => {
-    const { className, inputClassName, placeholder, isMulti, disabled } = loadingProps();
-    return (
-      <select
-        className={twMerge(
-          'select block px-4 py-2 !text-current/50',
-          isMulti && '!min-h-12',
-          inputClassName,
-          className
-        )}
-        defaultValue=""
-        disabled={disabled}
-      >
-        <option value="" disabled>
-          {placeholder}
-        </option>
-      </select>
-    );
-  };
-
-const ReactSelect = withLoadingProps((loadingProps) =>
-  dynamic(() => import('react-select'), {
-    ssr: false,
-    loading: generatePlaceholder(loadingProps)
-  })
-);
-
-const ReactSelectAsync = withLoadingProps((loadingProps) =>
-  dynamic(() => import('react-select/async'), {
-    ssr: false,
-    loading: generatePlaceholder(loadingProps)
-  })
-);
-
-const ReactSelectCreatable = withLoadingProps((loadingProps) =>
-  dynamic(() => import('react-select/creatable'), {
-    ssr: false,
-    loading: generatePlaceholder(loadingProps)
-  })
-);
-
-const ReactSelectAsyncCreatable = withLoadingProps((loadingProps) =>
-  dynamic(() => import('react-select/async-creatable'), {
-    ssr: false,
-    loading: generatePlaceholder(loadingProps)
-  })
-);
 
 const Control = ({ children, ...props }) => {
   const initialIcon = props.selectProps?.icon;
@@ -113,7 +63,7 @@ const Option = ({ isSelected, isMulti, children, ...props}) => {
     );
 }
 
-function SelectBase({
+export const Select = forwardRef(({
   component,
   label,
   containerClassName,
@@ -134,15 +84,16 @@ function SelectBase({
   instruction,
   instructionClassName,
   disabled,
+  name,
   ...props
-}) {
+}, innerRef) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue);
-
   const id = useId();
   const doOnChange = (selectedVal) => {
     setSelectedValue(selectedVal);
     if (onChange) {
-      onChange(selectedVal);
+      // Fake event-shaped object, to play nice with other libraries
+      onChange({ type: 'change', target: { value: selectedVal, name }});
     }
   };
 
@@ -156,7 +107,7 @@ function SelectBase({
   const SelectComponent = component || ReactSelect;
   const value = propValue || selectedValue;
   return (
-    <label className={twMerge('form-control w-full', containerClassName)}>
+    <label className={twMerge('form-control w-full', disabled && 'opacity-60', containerClassName)}>
       {!!label && (
         <div className={twMerge('label', labelClassName)}>
           <span className="label-text">{label}</span>
@@ -165,6 +116,7 @@ function SelectBase({
       <SelectComponent
         {...props}
         unstyled
+        ref={innerRef}
         instanceId={id}
         isDisabled={disabled}
         value={value}
@@ -192,6 +144,7 @@ function SelectBase({
               inputClassName,
               isFocused && '!outline-current',
               isMulti && '!min-h-12',
+              !!disabled && 'disabled select-none',
               !!error && 'select-error text-error'
             ),
           menuList: () => 'text-sm bg-base-100 mt-2 p-2 shadow-sm rounded-md',
@@ -228,19 +181,16 @@ function SelectBase({
       )}
     </label>
   );
-}
+});
+Select.displayName = 'Select';
 
-export function Select(props) {
-  return <SelectBase {...props} />;
-}
-
-export function SelectAsync({
+export const SelectAsync = forwardRef(({
   debouncedLoad = 300,
   loadOptions: baseLoadOptions,
   searchParams,
   component,
   ...props
-}) {
+}, ref) => {
   const debounceRef = useRef();
   const loadOptions = (txt, cb) => {
     if (!(typeof loadOptions === 'function')) {
@@ -256,18 +206,22 @@ export function SelectAsync({
   };
 
   return (
-    <SelectBase
+    <Select
       component={component || ReactSelectAsync}
       loadOptions={loadOptions}
       {...props}
+      ref={ref}
     />
   );
-}
+});
+SelectAsync.displayName = 'SelectAsync';
 
-export function SelectCreatable(props) {
-  return <SelectBase component={ReactSelectCreatable} {...props} />;
-}
+export const SelectCreatable = forwardRef((props, ref) => {
+  return <Select component={ReactSelectCreatable} {...props} ref={ref} />;
+});
+SelectCreatable.displayName = 'SelectCreatable';
 
-export function SelectAsyncCreatable(props) {
-  return <SelectAsync component={ReactSelectAsyncCreatable} {...props} />;
-}
+export const SelectAsyncCreatable = forwardRef((props, ref) => {
+  return <SelectAsync component={ReactSelectAsyncCreatable} {...props} ref={ref} />;
+});
+SelectAsyncCreatable.displayName = 'SelectAsyncCreatable';

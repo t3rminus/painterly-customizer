@@ -12,7 +12,7 @@ export function SubmitForm({ authors, categories, groups }) {
           New Texture Option
         </Button>
       </div>
-      <form>
+      <div>
         <h3 className="font-bold pb-4">My Textures</h3>
         {textures.map((texture, idx) => (
           <TextureForm
@@ -23,7 +23,7 @@ export function SubmitForm({ authors, categories, groups }) {
             groups={groups}
           />
         ))}
-      </form>
+      </div>
     </div>
   );
 };
