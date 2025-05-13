@@ -4,7 +4,7 @@ import { getLayoutUrl } from '@/lib/utils-server';
 export default async function ProfileLayout({ children }) {
   const user = await getUser();
   if (!user) {
-    return signIn(null, { redirectTo: getLayoutUrl() });
+    return signIn(null, { redirectTo: await getLayoutUrl() });
   }
 
   return <>{children}</>;

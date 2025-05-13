@@ -17,7 +17,7 @@ const RenderLevel = ({ ...props }) => {
                   <h4 className="font-bold mb-1">{g.name}</h4>
                   <div className="grid gap-1 grid-cols-1">
                     {options
-                      .filter((o) => o['option-group'] === g.id)
+                      .filter((o) => o.optionGroup === g.id)
                       .map((o) => (
                         <CustomizerOption key={o.id} option={o} group={g} />
                       ))}

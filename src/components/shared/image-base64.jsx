@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useState } from 'react';
+import { useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ImageOutline } from '@raresail/react-ionicons';
 
@@ -10,15 +10,41 @@ export function ImageBase64({
   labelClassName,
   defaultValue,
   value,
-  onChange,
+  onChange: onChangeProp,
   signUpload,
   deleteFile,
   placeholder = 'Select an image…',
   icon,
   accept = 'image/png,image/jpeg,image/webp,image/gif',
+  onFocus,
+  onBlur,
+  ref,
+  name,
+  error,
+  errorClassName,
+  instruction,
+  instructionClassName,
   ...props
 }) {
   const [currentValue, setCurrentValue] = useState(value || defaultValue || '');
+  const inputRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    ...inputRef?.current,
+    focus: (e) => buttonRef?.current.focus(e),
+    blur: (e) => buttonRef?.current?.blur(e)
+  }));
+
+  const onChange = useCallback(
+    (value) => {
+      if (onChangeProp) {
+        // Fake event-shaped object, to play nice with other libraries
+        onChangeProp({ type: 'change', target: { value, name } });
+      }
+    },
+    [name, onChangeProp]
+  );
 
   const upload = useCallback(() => {
     const fileInput = document.createElement('input');
@@ -31,6 +57,7 @@ export function ImageBase64({
         reader.readAsDataURL(file);
         reader.onload = () => {
           setCurrentValue(reader.result);
+          onChange(reader.result);
         };
         reader.onerror = (err) => {
           alert('An error ocurred opening your file.');
@@ -40,11 +67,18 @@ export function ImageBase64({
       }
     });
     fileInput.click();
-  }, [accept]);
+  }, [accept, onChange]);
 
   return (
     <>
-      <input value={currentValue} {...props} readOnly type="hidden" />
+      <input
+        name={name}
+        value={currentValue}
+        {...props}
+        readOnly
+        type="hidden"
+        ref={inputRef}
+      />
       <label
         className={twMerge(
           'form-control block w-full relative',
@@ -59,6 +93,7 @@ export function ImageBase64({
         <div className="relative">
           <div
             role="button"
+            ref={buttonRef}
             aria-label="Select an image"
             onClick={(e) => {
               e.preventDefault();
@@ -72,13 +107,20 @@ export function ImageBase64({
               }
             }}
             className={twMerge(
-              'w-full h-auto aspect-square flex flex-col justify-center items-center bg-transparent p-2 cursor-pointer input input-beautifi bg-base100 shadow-beautifi'
+              'w-full h-auto aspect-square flex flex-col justify-center items-center bg-transparent p-2 cursor-pointer input bg-base100',
+              !!error && 'input-error',
+              className
             )}
+            onFocus={onFocus}
+            onBlur={onBlur}
           >
             {!currentValue && !value && (
               <>
                 {!icon && icon !== null && (
-                  <ImageOutline className="w-12 h-12 text-base-content/50" strokeWidth="0.75rem" />
+                  <ImageOutline
+                    className="w-12 h-12 text-base-content/50"
+                    strokeWidth="0.75rem"
+                  />
                 )}
                 {icon}
                 {!!placeholder && <span>{placeholder}</span>}
@@ -93,6 +135,20 @@ export function ImageBase64({
             )}
           </div>
         </div>
+        {!!error?.message && (
+          <div className={twMerge('label pb-0', errorClassName)}>
+            <span className="label-text-alt text-error">{error?.message}</span>
+          </div>
+        )}
+        {!!instruction && (
+          <div className={twMerge('label pb-0', instructionClassName)}>
+            {typeof instruction === 'string' ? (
+              <span className="label-text-alt opacity-60">{instruction}</span>
+            ) : (
+              instruction
+            )}
+          </div>
+        )}
       </label>
     </>
   );

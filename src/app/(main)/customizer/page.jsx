@@ -1,6 +1,6 @@
 import { getCategoryTree } from '@/lib/db/category';
 import { getOptions } from '@/lib/db/option';
-import { getOptionGroups } from '@/lib/db/option-group';
+import { getOptionGroups } from '@/lib/db/optionGroup';
 import CustomizerForm from './form';
 
 export default async function Customizer() {
@@ -10,7 +10,7 @@ export default async function Customizer() {
 
   options = options.map((o) => ({
     ...o,
-    preview: `data:image/png;base64,${o.preview.toString('base64')}`
+    preview: `data:image/png;base64,${o.preview?.toString('base64')}`
   }));
 
   return (

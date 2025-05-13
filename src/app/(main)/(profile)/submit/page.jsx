@@ -1,12 +1,12 @@
 import { getAuthors } from '@/lib/db/option';
 import { SubmitForm } from './form';
 import { getCategoryTree } from '@/lib/db/category';
-import { getOptionGroups } from '@/lib/db/option-group';
+import { getOptionGroupWithTextures } from '@/lib/db/optionGroup';
 
 export default async function Submit() {
   const authors = await getAuthors();
   const categories = await getCategoryTree();
-  const groups = await getOptionGroups();
+  const groups = await getOptionGroupWithTextures();
 
   console.log(categories);
 

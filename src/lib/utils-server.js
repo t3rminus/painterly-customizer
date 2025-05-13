@@ -3,8 +3,8 @@
  */
 import { headers as NextHeaders } from 'next/headers';
 
-export const getLayoutUrl = (fallback = '/') => {
-  const headers = NextHeaders();
+export async function getLayoutUrl(fallback = '/') {
+  const headers = await NextHeaders();
   let url = headers.get('x-url');
   if (!url) {
     const host = headers.get('x-forwarded-host') || headers.get('host');
