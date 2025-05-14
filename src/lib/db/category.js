@@ -4,6 +4,7 @@ export async function getCategoryTree() {
   const nodes = await db
     .selectFrom('category')
     .selectAll()
+    .orderBy('order', 'asc')
     .execute();
 
   // Index by ID

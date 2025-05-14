@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { SlideToggle } from '../shared/slide-toggle';
 import { IconOpen, IconClose } from '../shared/icons';
 
-export function CustomizerGroup({ name, children }) {
+export function CollapsingCategory({ name, children }) {
   const [open, setOpen] = useState(false);
 
   return (
