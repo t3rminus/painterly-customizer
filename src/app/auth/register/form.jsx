@@ -1,6 +1,6 @@
 'use client';
+import { useActionState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useFormState } from 'react-dom';
 import { register as submitRegister } from './actions';
 import { Input } from '@/components/shared/input';
 import { Button } from '@/components/shared/button';
@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { ArrowBackOutline, LockClosedOutline, MailOutline } from '@raresail/react-ionicons';
 
 export default function RegistrationForm({ callbackUrl }) {
-  const [errorMessage, dispatch] = useFormState(
+  const [errorMessage, dispatch] = useActionState(
     submitRegister.bind(null, callbackUrl)
   );
   const {

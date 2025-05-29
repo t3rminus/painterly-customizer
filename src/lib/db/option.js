@@ -21,3 +21,13 @@ export const getAuthors = async () => {
 
   return results.map(r => r.author);
 };
+
+export const getOptionsByUser = async (user) => {
+  return db
+    .selectFrom('option')
+    .selectAll()
+    .where('user', '=', user)
+    .orderBy('optionGroup')
+    .orderBy('order')
+    .execute();
+}

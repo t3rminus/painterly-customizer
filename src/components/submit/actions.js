@@ -26,7 +26,7 @@ export async function getOptionShape(group) {
 
 export async function saveOption(data) {
   const user = await getUser();
-
+  let result = null;
   await db.transaction().execute(async (txn) => {
     if (data.id) {
       // Nothing yet
@@ -52,6 +52,8 @@ export async function saveOption(data) {
           })
           .execute();
       }
+      result = option.id;
     }
   });
+  return result;
 }

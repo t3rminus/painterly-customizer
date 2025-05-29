@@ -17,7 +17,6 @@ const blankImage = (size) => {
 
 export async function POST(req) {
   const formData = parseFormData(await req.formData());
-  console.log(formData);
   const archive = archiver('zip');
 
   const options = Object.values(formData.options);

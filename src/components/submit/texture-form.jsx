@@ -8,12 +8,13 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { getOptionShape, saveOption } from './actions';
 
-export function TextureForm({ authors, categories, groups }) {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+export function TextureForm({ texture, authors, categories, groups }) {
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({ defaultValues: texture });
   const [shape, setShape] = useState(null);
   const submitHandler = async (data) => {
     try {
-      await saveOption(data);
+      const id = await saveOption(data);
+      setValue('id', id);
     } catch(err) {}
   };
 
@@ -30,7 +31,6 @@ export function TextureForm({ authors, categories, groups }) {
     (async () => {
       if (group) {
         const shape = await getOptionShape(group);
-        console.log(shape);
         if (shape) {
           setShape(shape.filter(s => s.placeholder));
         } else {
@@ -43,8 +43,9 @@ export function TextureForm({ authors, categories, groups }) {
   return (
     <form
       onSubmit={handleSubmit(submitHandler)}
-      className="card card-border bg-base-100 shadow-sm"
+      className="card card-border bg-base-100 not-dark:shadow-sm dark:outline dark:outline-input"
     >
+      <input readOnly type="hidden" {...register('id')} />
       <div className="card-body flex-row items-start">
         <div className="w-32">
           <ImageBase64
@@ -78,18 +79,24 @@ export function TextureForm({ authors, categories, groups }) {
           <Select
             label="Category"
             inputClassName="w-full h-12"
-            options={categories.map((c) => ({
-              label: c.name,
-              options: c.children.map((cc) => ({
-                label: cc.name,
-                value: cc.id
-              }))
-            }))}
+            options={categories.map((c) => {
+              if (c.children?.length) {
+                return {
+                  label: c.name,
+                  options: c.children.map((cc) => ({
+                    label: cc.name,
+                    value: cc.id
+                  }))
+                };
+              } else {
+                return { label: c.name, value: c.id };
+              }
+            })}
             {...register('category', {
               required: 'Please select a category'
             })}
           />
-          <Select
+          <SelectCreatable
             label="Group"
             inputClassName="w-full h-12"
             disabled={!category}

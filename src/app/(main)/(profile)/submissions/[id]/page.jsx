@@ -8,7 +8,5 @@ export default async function Submit() {
   const categories = await getCategoryTree();
   const groups = await getOptionGroupWithTextures();
 
-  console.log(categories);
-
   return <SubmitForm authors={authors} categories={categories} groups={groups} />;
 }

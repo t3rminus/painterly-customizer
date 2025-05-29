@@ -9,3 +9,28 @@
 @theme {
   --color-input: color-mix(in oklab, var(--color-base-content) 20%, #0000);
 }
+
+@layer components {
+  .gridtable {
+    @apply grid;
+  }
+  .gridtable > * {
+    @apply text-sm min-w-min;
+  }
+  .gridtable-header {
+    @apply py-2.5 px-4 text-neutral-content font-medium;
+    background-color: color-mix(in oklab, var(--color-neutral), 60% transparent);
+  }
+  .gridtable-cell {
+    @apply py-3 px-4 flex flex-col items-start justify-center;
+  }
+  .gridtable-rowfooter {
+    @apply pb-3 px-4 flex flex-col items-start justify-start col-span-full;
+  }
+  .gridtable-odd {
+    background-color: color-mix(in oklab, var(--color-neutral), 85% transparent);
+  }
+  .gridtable-footer {
+    @apply py-2.5 px-4 font-medium;
+  }
+}

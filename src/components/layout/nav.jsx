@@ -17,7 +17,7 @@ export function Nav({ user, className, vertical = false }) {
       <Link href="/customizer" className="flex items-center p-4">
         Customizer
       </Link>
-      <Link href="/submit" className="p-4 flex items-center">
+      <Link href="/submissions" className="p-4 flex items-center">
         Submit a Texture
       </Link>
       {!user && (

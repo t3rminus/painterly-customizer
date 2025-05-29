@@ -29,7 +29,7 @@ async function migrateToLatest() {
 
   results?.forEach((it) => {
     if (it.status === 'Success') {
-      console.log(`Migration "${it.migrationName}" was executed successfully`);
+      console.info(`Migration "${it.migrationName}" was executed successfully`);
     } else if (it.status === 'Error') {
       console.error(`Failed to execute migration "${it.migrationName}"`);
     }

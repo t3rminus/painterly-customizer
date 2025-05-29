@@ -210,10 +210,12 @@ export const filterObj = (obj, keys) =>
     {}
   );
 
-export const generateRandomStr = (length = 12, chrs = 'ABCDEFGHJKLMNPQRTUVWXYZabcdefghjklmnpqrtuvwxyz2346789!@#$%?=') =>
-  Array(length) // Empty array of length
-    .fill(0) // Fill with zeros (map won't loop over empty values)
-    .map(() => chrs[Math.floor(Math.random() * chrs.length)]) // Generate random character
-    .join(''); // Join result
+
+export const repeat = (length, fn) => Array.from({ length }, (_v, k) => fn(k));
+
+export const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const defaultChrs = 'ABCDEFGHJKLMNPQRTUVWXYZabcdefghjklmnpqrtuvwxyz2346789!@#$%?=';
+export const generateRandomStr = (length = 12, chrs) => repeat(length, () => pick(chrs || defaultChrs)).join('');
 
 export const clamp = (num, min, max) => Math.max(min, Math.min(max, num));
