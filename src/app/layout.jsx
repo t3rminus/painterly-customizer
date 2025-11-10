@@ -12,9 +12,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <PageLayout user={user}>
-          {children}
-        </PageLayout>
+        <PageLayout user={user}>{children}</PageLayout>
       </body>
     </html>
   );

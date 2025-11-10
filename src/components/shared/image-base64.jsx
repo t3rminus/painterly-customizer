@@ -18,6 +18,7 @@ export function ImageBase64({
   accept = 'image/png,image/jpeg,image/webp,image/gif',
   onFocus,
   onBlur,
+  previewClassName,
   ref,
   name,
   error,
@@ -30,11 +31,28 @@ export function ImageBase64({
   const inputRef = useRef(null);
   const buttonRef = useRef(null);
 
-  useImperativeHandle(ref, () => ({
-    ...inputRef?.current,
-    focus: (e) => buttonRef?.current.focus(e),
-    blur: (e) => buttonRef?.current?.blur(e)
-  }));
+  useImperativeHandle(ref, () => {
+    return new Proxy(inputRef?.current, {
+      set(obj, prop, value) {
+        if (prop === 'value') {
+          setCurrentValue(value);
+        }
+        obj[prop] = value;
+        return true;
+      },
+      get(obj, prop) {
+        if (prop === 'value') {
+          return currentValue;
+        } else if (prop === 'focus') {
+          return (e) => buttonRef?.current.focus(e)
+        } else if (prop === 'blur') {
+          return (e) => buttonRef?.current.blur(e)
+        } else {
+          return obj[prop];
+        }
+      }
+    });
+  }, [currentValue]);
 
   const onChange = useCallback(
     (value) => {
@@ -130,7 +148,7 @@ export function ImageBase64({
               <img
                 src={currentValue}
                 alt="Image Preview"
-                className="block w-full h-full object-contain"
+                className={twMerge('block w-full h-full object-contain', previewClassName)}
               />
             )}
           </div>

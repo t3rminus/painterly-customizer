@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { db } from '.';
+import { db, manyRelation, oneRelation } from '.';
 
 export const getOptions = () => {
   return db
@@ -30,4 +30,34 @@ export const getOptionsByUser = async (user) => {
     .orderBy('optionGroup')
     .orderBy('order')
     .execute();
+}
+
+export const getOption = async (id, user) => {
+  return db
+    .selectFrom('option')
+    .selectAll()
+    .select((eb) => [
+      manyRelation(
+        eb
+          .selectFrom('texture')
+          .selectAll()
+          .whereRef('texture.option', '=', 'option.id')
+      ).as('textures'),
+      oneRelation(
+        eb
+          .selectFrom('category')
+          .select(['category.id', 'category.name'])
+          .innerJoin('option_group', 'option_group.category', 'category.id')
+          .whereRef('option_group.id', '=', 'option.optionGroup')
+      ).as('category'),
+      oneRelation(
+        eb
+          .selectFrom('option_group')
+          .select(['option_group.id', 'option_group.name'])
+          .whereRef('option_group.id', '=', 'option.optionGroup')
+      ).as('group')
+    ])
+    .where('id', '=', id)
+    .where('user', '=', user)
+    .executeTakeFirst();
 }

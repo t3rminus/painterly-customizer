@@ -1,5 +1,5 @@
 'use client';
-import { useId, useState, cloneElement, useRef, forwardRef } from 'react';
+import { useId, useState, cloneElement, useRef, useImperativeHandle } from 'react';
 import ReactSelect, { components } from 'react-select';
 import ReactSelectAsync from 'react-select/async';
 import ReactSelectCreatable from 'react-select/creatable';
@@ -63,7 +63,17 @@ const Option = ({ isSelected, isMulti, children, ...props}) => {
     );
 }
 
-export const Select = forwardRef(({
+const Input = ({ ariaActivedescendant, ...props }) => {
+  return (
+    <components.Input
+      {...props}
+      aria-activedescendant={ariaActivedescendant || ''}
+    />
+  );
+}
+
+export function Select({
+  id: propId,
   component,
   label,
   containerClassName,
@@ -85,9 +95,13 @@ export const Select = forwardRef(({
   instructionClassName,
   disabled,
   name,
+  ref: propRef,
   ...props
-}, innerRef) => {
-  const [selectedValue, setSelectedValue] = useState(defaultValue);
+}) {
+  const SelectComponent = component || ReactSelect;
+  const ref = useRef();
+  const [selectedValue, setSelectedValue] = useState(propValue || defaultValue);
+  const actualValue = propValue || selectedValue;
   const id = useId();
   const doOnChange = (selectedVal) => {
     setSelectedValue(selectedVal);
@@ -104,10 +118,41 @@ export const Select = forwardRef(({
     /* ignore */
   }
 
-  const SelectComponent = component || ReactSelect;
-  const value = propValue || selectedValue;
+  useImperativeHandle(
+    propRef,
+    () => {
+      if (!ref.current) {
+        return null;
+      }
+      return new Proxy(ref.current, {
+        set(obj, prop, value) {
+          if (prop === 'value') {
+            setSelectedValue(value);
+          }
+          obj[prop] = value;
+          return true;
+        },
+        get(obj, prop) {
+          if (prop === 'value') {
+            return actualValue;
+          } else {
+            return obj[prop];
+          }
+        }
+      });
+    },
+    [actualValue]
+  );
+
   return (
-    <label className={twMerge('form-control w-full', disabled && 'opacity-60', containerClassName)}>
+    <label
+      className={twMerge(
+        'form-control w-full',
+        disabled && 'opacity-60',
+        containerClassName
+      )}
+      htmlFor={propId || id}
+    >
       {!!label && (
         <div className={twMerge('label', labelClassName)}>
           <span className="label-text">{label}</span>
@@ -116,10 +161,11 @@ export const Select = forwardRef(({
       <SelectComponent
         {...props}
         unstyled
-        ref={innerRef}
+        ref={ref}
         instanceId={id}
+        inputId={propId || id}
         isDisabled={disabled}
-        value={value}
+        value={actualValue}
         onChange={doOnChange}
         isMulti={isMulti}
         menuIsOpen={menuIsOpen}
@@ -133,7 +179,8 @@ export const Select = forwardRef(({
           MultiValueLabel,
           MultiValueRemove,
           ClearIndicator,
-          Option
+          Option,
+          Input
         }}
         className={className}
         classNames={{
@@ -181,16 +228,15 @@ export const Select = forwardRef(({
       )}
     </label>
   );
-});
-Select.displayName = 'Select';
+}
 
-export const SelectAsync = forwardRef(({
+export function SelectAsync({
   debouncedLoad = 300,
   loadOptions: baseLoadOptions,
   searchParams,
   component,
   ...props
-}, ref) => {
+}) {
   const debounceRef = useRef();
   const loadOptions = (txt, cb) => {
     if (!(typeof loadOptions === 'function')) {
@@ -210,18 +256,14 @@ export const SelectAsync = forwardRef(({
       component={component || ReactSelectAsync}
       loadOptions={loadOptions}
       {...props}
-      ref={ref}
     />
   );
-});
-SelectAsync.displayName = 'SelectAsync';
+};
 
-export const SelectCreatable = forwardRef((props, ref) => {
-  return <Select component={ReactSelectCreatable} {...props} ref={ref} />;
-});
-SelectCreatable.displayName = 'SelectCreatable';
+export function SelectCreatable(props) {
+  return <Select component={ReactSelectCreatable} {...props} />;
+}
 
-export const SelectAsyncCreatable = forwardRef((props, ref) => {
-  return <SelectAsync component={ReactSelectAsyncCreatable} {...props} ref={ref} />;
-});
-SelectAsyncCreatable.displayName = 'SelectAsyncCreatable';
+export function SelectAsyncCreatable(props) {
+  return <SelectAsync component={ReactSelectAsyncCreatable} {...props} />;
+}

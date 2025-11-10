@@ -11,17 +11,18 @@ const base64ToBuffer = (str) => {
 }
 
 export async function getOptionShape(group) {
-  const textures = await dbGetOptionShape(group.value);
-  if (textures && textures.length) {
-    return textures.map((t) => ({
-      path: t.path,
-      compose: t.compose,
-      placeholder: t.source ? `data:image/png;base64,${Buffer.from(t.source).toString('base64')}` : null,
-      version: t.version
-    }));
-  } else {
-    return false;
+  if (/^[0-9]+/.test(group.value)) {
+    const textures = await dbGetOptionShape(group.value);
+    if (textures && textures.length) {
+      return textures.map((t) => ({
+        path: t.path,
+        compose: t.compose,
+        placeholder: t.source ? `data:image/png;base64,${Buffer.from(t.source).toString('base64')}` : null,
+        version: t.version
+      }));
+    }
   }
+  return false;
 }
 
 export async function saveOption(data) {
